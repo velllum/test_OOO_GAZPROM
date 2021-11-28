@@ -1,0 +1,113 @@
+<!doctype html>
+{% load static %}
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Краткое описание">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Hugo 0.88.1">
+  <title>{{ title }}</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="{% static 'css/bootstrap.min.css' %}" type="text/css" rel="stylesheet">
+
+  <style>
+.bd-placeholder-img {
+font-size: 1.125rem;
+text-anchor: middle;
+-webkit-user-select: none;
+-moz-user-select: none;
+user-select: none;
+}
+
+@media (min-width: 768px) {
+.bd-placeholder-img-lg {
+font-size: 3.5rem;
+}
+}
+</style>
+
+
+  <!-- Custom styles for this template -->
+  <link href="https://fonts.googleapis.com/css?family=Playfair&#43;Display:700,900&amp;display=swap" rel="stylesheet">
+  <link href="{% static 'css/blog.rtl.css' %}" type="text/css" rel="stylesheet">
+  <!-- Custom styles for this template -->
+  <link href="{% static 'css/blog.css' %}" type="text/css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+  <header class="blog-header py-3">
+    <div class="row flex-nowrap justify-content-between align-items-center">
+      <div class="col-4 pt-1">
+        {% if user.is_authenticated %}
+        <div class="hstack gap-3">
+              <a class="btn btn-sm btn-primary" href="{% url 'index' %}">На главную</a>
+              <div class="vr"></div>
+              <a class="btn btn-sm btn-success" href="{% url 'create' %}">Создать статью</a>
+          </div>
+        {% endif %}
+      </div>
+      <div class="col-4 text-center">
+        <a class="blog-header-logo text-dark" href="{% url 'index' %}">BLOG</a>
+      </div>
+      <div class="col-4 d-flex justify-content-end align-items-center">
+        {% if user.is_authenticated %}
+        <div class="hstack gap-3">
+          Пользователь <b>{{user.get_username}}</b>
+          <div class="vr"></div>
+          <a class="btn btn-sm btn-primary" href="{% url 'logout' %}">Выйти</a>
+        </div>
+        {% else %}
+          <a class="btn btn-sm btn-primary" href="{% url 'login' %}">Войти</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+</div>
+
+
+<main class="container">
+  <br>
+  <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Заголовок</th>
+      <th scope="col">Описание</th>
+      <th scope="col">Действия</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for article in object_list %}
+    <tr>
+      <th scope="row">{{ forloop.counter }}</th>
+      <td>{{ article.title }}</td>
+      <td>{{ article.description }}</td>
+      <td>
+        <div class="hstack gap-3">
+
+          <a href="{% url 'show' article.slug %}" class="btn btn-secondary btn-sm" target="_blank">Просмотр</a>
+          <div class="vr"></div>
+          <a href="{% url 'edit' article.slug %}" class="btn btn-secondary btn-sm">Изменить</a>
+          <div class="vr"></div>
+
+          <form method="POST" action="{% url 'delete' article.slug %}">
+            {% csrf_token %}
+            {{ form.as_table }}
+            <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+          </form>
+
+        </div>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+</main>
+
+</body>
+</html>
